@@ -20,25 +20,12 @@ jobs:
         with:
           channel: 'stable'
           
-      - name: Setup project
+      - name: Build
         run: |
-          echo "name: snipertips" > pubspec.yaml
-          echo "description: SniperTips App" >> pubspec.yaml
-          echo "publish_to: 'none'" >> pubspec.yaml
-          echo "version: 1.0.0+1" >> pubspec.yaml
-          echo "environment:" >> pubspec.yaml
-          echo "  sdk: '>=3.0.0 <4.0.0'" >> pubspec.yaml
-          echo "dependencies:" >> pubspec.yaml
-          echo "  flutter:" >> pubspec.yaml
-          echo "    sdk: flutter" >> pubspec.yaml
-          echo "flutter:" >> pubspec.yaml
-          echo "  uses-material-design: true" >> pubspec.yaml
-          mkdir -p lib
-          cp main.dart lib/main.dart
-
-      - name: Build APK
-        run: |
+          flutter config --no-analytics
           flutter pub get
+          # Pokušavamo da nađemo main.dart bilo gde u repozitorijumu
+          find . -name main.dart -exec cp {} lib/ \;
           flutter build apk --release
 
       - name: Upload APK
