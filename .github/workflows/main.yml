@@ -7,28 +7,42 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '11'
-      - uses: subosito/flutter-action@v2
+          java-version: '17'
+          
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: Create pubspec.yaml
+          
+      - name: Setup project
         run: |
           echo "name: snipertips" > pubspec.yaml
+          echo "description: SniperTips App" >> pubspec.yaml
+          echo "publish_to: 'none'" >> pubspec.yaml
+          echo "version: 1.0.0+1" >> pubspec.yaml
+          echo "environment:" >> pubspec.yaml
+          echo "  sdk: '>=3.0.0 <4.0.0'" >> pubspec.yaml
           echo "dependencies:" >> pubspec.yaml
           echo "  flutter:" >> pubspec.yaml
           echo "    sdk: flutter" >> pubspec.yaml
+          echo "flutter:" >> pubspec.yaml
+          echo "  uses-material-design: true" >> pubspec.yaml
+          mkdir -p lib
+          cp main.dart lib/main.dart
+
       - name: Build APK
         run: |
-          mkdir -p lib
-          mv main.dart lib/main.dart
           flutter pub get
           flutter build apk --release
+
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
